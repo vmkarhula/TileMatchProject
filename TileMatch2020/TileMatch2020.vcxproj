@@ -152,9 +152,11 @@
     <ClCompile Include="ext\src\glad\glad.c" />
     <ClCompile Include="MatchGame.cpp" />
     <ClCompile Include="MatchMain.cpp" />
+    <ClCompile Include="SimpleShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatchGame.h" />
+    <ClInclude Include="SimpleShader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
