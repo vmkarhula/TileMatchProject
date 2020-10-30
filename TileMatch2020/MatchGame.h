@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Deck.h"
+
 #include <memory>
 
 namespace ErrorCallbacks {
@@ -37,6 +39,8 @@ public:
 private: 
 
 	GLFWwindow* m_Window = nullptr;
+
+	Deck* m_Deck;
 
 	int m_windowWidth = 800;
 	int m_windowHeight = 600;

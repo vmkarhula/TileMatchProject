@@ -149,13 +149,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Card.cpp" />
+    <ClCompile Include="Deck.cpp" />
     <ClCompile Include="ext\src\glad\glad.c" />
     <ClCompile Include="MatchGame.cpp" />
     <ClCompile Include="MatchMain.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="CardMath.h" />
+    <ClInclude Include="Coordinate.h" />
+    <ClInclude Include="Deck.h" />
     <ClInclude Include="MatchGame.h" />
+    <ClInclude Include="RenderUtil.h" />
     <ClInclude Include="SimpleShader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
