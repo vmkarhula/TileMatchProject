@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Deck.h"
+#include "RenderUtil.h"
 
 #include <memory>
 
@@ -18,6 +19,14 @@ namespace ErrorCallbacks {
 		GLsizei length,
 		const GLchar* message,
 		const void* userParam);
+}
+
+
+namespace InputCallbacks {
+
+	static void I_MouseButtonForwarder(GLFWwindow* window, int button, int action, int mods);
+	static void I_MousePositionForwarder(GLFWwindow* window, double xpos, double ypos);
+
 }
 
 namespace GLInfo {
@@ -35,14 +44,28 @@ public:
 
 	bool Init();
 	int Run();
+	
+	void I_MouseButton(GLFWwindow* window, int button, int action, int mods);
+	void I_MousePosition(GLFWwindow* window, double xpos, double ypos);
 
 private: 
 
+	void RenderClock();
+
 	GLFWwindow* m_Window = nullptr;
 
-	Deck* m_Deck;
+	Deck* m_Deck = nullptr;
 
-	int m_windowWidth = 800;
-	int m_windowHeight = 600;
+	int m_windowWidth = 1280;
+	int m_windowHeight = 720;
+
+
+	double m_MouseX = 0.0;
+	double m_MouseY = 0.0;
+
+	double m_PrevTick = 0.0;
+
+	ScreenRect m_PlayAreaRect;
+	ScreenRect m_TimerRect;
 
 };

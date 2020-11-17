@@ -38,8 +38,14 @@ void Deck::Update(double dt)
 
 void Deck::Draw()
 {
-	// Draw the rim
 	
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Draw the rim
+	
+
+    // Draw the cards
     m_CardShader.Bind();
 	
     GLuint modelLoc = FindUniform("model");
@@ -48,9 +54,9 @@ void Deck::Draw()
 
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    float aspect = 800 / 600;
+    float aspect = 800.0f / 600.0f;
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), aspect, 0.1f, 100.0f);
-    //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f);
+    //glm::mat4 proj = glm::ortho(0.0f, 4.0f, 4.0f, 0.0f);
 
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
@@ -65,8 +71,21 @@ void Deck::Draw()
 
 }
 
-void Deck::Click(int mouseX, int mouseY, int mouseButton)
+void Deck::Click(double mouseX, double mouseY, int mouseButton)
 {
+    int target = -1;
+
+    if (mouseX < 400.0)
+        target = 0;
+
+    else 
+        target = 1;
+    
+    if (m_Cards[target].facing == Card::CamFace::BACK)
+        m_Cards[target].facing = Card::CamFace::FRONT;
+
+    else if (m_Cards[target].facing == Card::CamFace::FRONT)
+        m_Cards[target].facing = Card::CamFace::BACK;
 }
 
 GLuint Deck::FindUniform(std::string uniformName)
@@ -100,35 +119,35 @@ CardGeom Deck::CreateCardGeom()
 
     float cardVertices[] = {
 
-        -0.4f,  0.8f,  0.1f,
-        -0.4f, -0.8f,  0.1f,
-         0.4f, -0.8f,  0.1f,
-         0.4f,  0.8f,  0.1f,
+        -0.5f,  0.8f,  0.1f,
+        -0.5f, -0.8f,  0.1f,
+         0.5f, -0.8f,  0.1f,
+         0.5f,  0.8f,  0.1f,
 
-        -0.4f,  0.8f,  -0.1f,
-        -0.4f, -0.8f,  -0.1f,
-         0.4f, -0.8f,  -0.1f,
-         0.4f,  0.8f,  -0.1f,
+        -0.5f,  0.8f,  -0.1f,
+        -0.5f, -0.8f,  -0.1f,
+         0.5f, -0.8f,  -0.1f,
+         0.5f,  0.8f,  -0.1f,
 
-         -0.4f,  0.8f, -0.1f,
-         -0.4f, -0.8f, -0.1f,
-         -0.4f, -0.8f,  0.1f,
-         -0.4f,  0.8f,  0.1f,
+         -0.5f,  0.8f, -0.1f,
+         -0.5f, -0.8f, -0.1f,
+         -0.5f, -0.8f,  0.1f,
+         -0.5f,  0.8f,  0.1f,
 
-         0.4f,  0.8f, -0.1f,
-         0.4f, -0.8f, -0.1f,
-         0.4f, -0.8f,  0.1f,
-         0.4f,  0.8f,  0.1f,
+         0.5f,  0.8f, -0.1f,
+         0.5f, -0.8f, -0.1f,
+         0.5f, -0.8f,  0.1f,
+         0.5f,  0.8f,  0.1f,
 
-        -0.4f, 0.8f, -0.1f,
-        -0.4f, 0.8f,  0.1f,
-         0.4f, 0.8f,  0.1f,
-         0.4f, 0.8f, -0.1f,
+        -0.5f, 0.8f, -0.1f,
+        -0.5f, 0.8f,  0.1f,
+         0.5f, 0.8f,  0.1f,
+         0.5f, 0.8f, -0.1f,
 
-        -0.4f, -0.8f, -0.1f,
-        -0.4f, -0.8f,  0.1f,
-         0.4f, -0.8f,  0.1f,
-         0.4f, -0.8f, -0.1f
+        -0.5f, -0.8f, -0.1f,
+        -0.5f, -0.8f,  0.1f,
+         0.5f, -0.8f,  0.1f,
+         0.5f, -0.8f, -0.1f
 
     };
 

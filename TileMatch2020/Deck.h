@@ -22,16 +22,19 @@ public:
 	void Update(double dt);
 	void Draw(); 
 
-	void Click(int mouseX, int mouseY, int mouseButton);
+	void Click(double mouseX, double mouseY, int mouseButton);
 
 private:
 
-	GLuint FindUniform(std::string uniformName);
-	CardGeom CreateCardGeom();
+	GLuint		FindUniform(std::string uniformName);
+	CardGeom	CreateCardGeom();
 
 	std::vector<Card> m_Cards;
 	std::unordered_map<std::string, GLuint> m_ShaderCache;
 	
-	CardGeom m_CardGeom;
-	SimpleShader m_CardShader;
+	CardGeom		m_CardGeom;
+	SimpleShader	m_CardShader;
+
+	bool			m_DrawImGui;
+
 };
