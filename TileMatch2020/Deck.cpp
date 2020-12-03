@@ -4,25 +4,68 @@
 
 #include <assert.h>
 
-Deck::Deck(int cardX, int cardY, std::string tileSet) :
+Deck::Deck(GameSize gameSize, std::string tileSet) :
+
+    m_NumCardsX(0),
+    m_NumCardsY(0),
     m_CardGeom(CreateCardGeom()),
     m_CardShader(".\\shader\\cardflip.vs.glsl", ".\\shader\\basic.fs.glsl")
+
 {
-	// Require even number of cards, at least for now
-	assert((cardX * cardY) % 2 == 0);
-       
     
 	m_ShaderCache["model"] = glGetUniformLocation(m_CardShader.GL_ID, "modelMtx");
 	m_ShaderCache["proj"] = glGetUniformLocation(m_CardShader.GL_ID, "projMtx");
 	m_ShaderCache["view"] = glGetUniformLocation(m_CardShader.GL_ID, "viewMtx");
+    
+    switch (gameSize)
+    {
+    case GameSize::TINY: {
 
+        m_NumCardsX = 20;
+        m_NumCardsY = 20; 
+
+    } break;
+
+    case GameSize::SMALL:
+    case GameSize::MEDIUM:
+    case GameSize::LARGE:
+    {
+        std::cerr << "ERROR, UNIMPLEMENTED GAME SIZE" << std::endl;
+
+    } break;
+   
+    
+    default:
+        break;
+    }
+
+    
+    double deltaY = 2.0 / m_NumCardsY;
+    double deltaX = 2.0 / m_NumCardsX;
+
+    for (int i = 0; i < m_NumCardsY; i++) {
+
+        for (int j = 0; j < m_NumCardsX; j++) {
+            
+            Card newCard(Coordinate2D{ static_cast<float>(0.5 * deltaX + j * deltaX -1.0f), static_cast < float>(0.5f * deltaY + i * deltaY - 1.0f )}, Card::CamFace::BACK);
+            newCard.scale = 0.5*std::min(deltaX, deltaY);
+            m_Cards.push_back(newCard);
+        }
+
+    }
+    /*
     Card newCard(Coordinate2D{ -0.5f, -0.5f }, Card::CamFace::BACK);
-
     m_Cards.push_back(newCard);
 
-    Card newCard2(Coordinate2D{ 0.5f, 0.5f }, Card::CamFace::BACK);
+    Card newCard2(Coordinate2D{ 0.5f, -0.5f }, Card::CamFace::BACK);
     m_Cards.push_back(newCard2);
-
+    
+    Card newCard3(Coordinate2D{ -0.5f, 0.5f }, Card::CamFace::BACK);
+    m_Cards.push_back(newCard3);
+    
+    Card newCard4(Coordinate2D{ 0.5f, 0.5f }, Card::CamFace::BACK);
+    m_Cards.push_back(newCard4);
+    */
 }
 
 Deck::~Deck()
@@ -36,7 +79,7 @@ void Deck::Update(double dt)
 
 }
 
-void Deck::Draw()
+void Deck::DrawPerspective()
 {
 	
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -56,8 +99,7 @@ void Deck::Draw()
 
     float aspect = 800.0f / 600.0f;
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), aspect, 0.1f, 100.0f);
-    //glm::mat4 proj = glm::ortho(0.0f, 4.0f, 4.0f, 0.0f);
-
+   
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 	
@@ -71,21 +113,85 @@ void Deck::Draw()
 
 }
 
+void Deck::DrawOrthographic()
+{
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Draw the rim
+
+
+    // Draw the cards
+    m_CardShader.Bind();
+
+    GLuint modelLoc = FindUniform("model");
+    GLuint viewLoc = FindUniform("view");
+    GLuint projLoc = FindUniform("proj");
+
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 30.0f);
+
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
+
+    for (const Card& c : m_Cards) {
+
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(c.model));
+        glDrawElements(GL_TRIANGLES, m_CardGeom.CardVertexCount, GL_UNSIGNED_INT, nullptr);
+    }
+}
+
 void Deck::Click(double mouseX, double mouseY, int mouseButton)
 {
-    int target = -1;
+    int target = 0;
 
-    if (mouseX < 400.0)
-        target = 0;
+    int x, y;
 
-    else 
-        target = 1;
+    y = m_NumCardsY * mouseY; 
+    x = m_NumCardsX * mouseX;
+
+    target = m_NumCardsX * y + x;
+
+    /*if (mouseX < 0.5) {
+
+        if (mouseY < 0.5)
+            target = 0;
+
+        else
+            target = 2;
+
+    }
+      
+    else {
+
+        if (mouseY < 0.5)
+            target = 1;
+
+        else
+            target = 3;
+    }
+    */    
     
-    if (m_Cards[target].facing == Card::CamFace::BACK)
+    if (m_Cards[target].facing == Card::CamFace::BACK){
+        
         m_Cards[target].facing = Card::CamFace::FRONT;
+        m_Selected.push_back(&m_Cards[target]);
+    }
 
-    else if (m_Cards[target].facing == Card::CamFace::FRONT)
+    else if (m_Cards[target].facing == Card::CamFace::FRONT){
+       
         m_Cards[target].facing = Card::CamFace::BACK;
+        m_Selected.push_back(&m_Cards[target]);
+    }
+
+    if (m_Selected.size() >= m_MaxSelected) {
+
+        ResolveSelection();
+    }
+
 }
 
 GLuint Deck::FindUniform(std::string uniformName)
@@ -243,5 +349,16 @@ CardGeom Deck::CreateCardGeom()
 
 	return geom;
 }
+
+void Deck::ResolveSelection()
+{
+    for (Card* card : m_Selected) {
+
+        card->facing = Card::CamFace::BACK;
+    }
+
+    m_Selected.clear();
+}
+
 
 

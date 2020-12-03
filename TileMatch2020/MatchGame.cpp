@@ -3,12 +3,29 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "RenderUtil.h"
 
 // For std::cout and std::cerr
 #include <iostream>
 
 MatchGame::MatchGame()
 {
+    // Set the screen portions according to the resolution
+    /* m_PlayAreaRect = { 
+        static_cast<GLint>(m_windowWidth * 0.02),
+        static_cast<GLint>(m_windowHeight * 0.05),
+        static_cast<GLint>(m_windowWidth -  m_windowWidth * 0.25),
+        static_cast<GLint>(m_windowHeight - m_windowHeight *  0.10)};
+    */
+
+    m_PlayAreaRect = CalculateGameArea(m_windowWidth, m_windowHeight);
+
+    m_TimerRect = {
+        static_cast<GLint>(m_windowWidth * 0.80),
+        static_cast<GLint>(m_windowHeight * 0.80),
+        static_cast<GLint>(m_windowWidth * 0.18),
+        static_cast<GLint>(m_windowHeight * 0.10) };
+
 }
 
 MatchGame::~MatchGame()
@@ -100,13 +117,12 @@ int MatchGame::Run()
 
 
         // Render the play area
-        glViewport(50, 50, m_windowWidth - 300, m_windowHeight - 100);
-        glScissor(50, 50, m_windowWidth - 300, m_windowHeight - 100);
-        m_Deck->Draw();
-
-        // Render the timer
-        glViewport(m_windowWidth - 200, m_windowHeight - 100, 150, 50);
-        glScissor(m_windowWidth - 200, m_windowHeight - 100, 150, 50);
+        SetDrawArea(m_PlayAreaRect);
+     
+        //m_Deck->DrawPerspective();
+        m_Deck->DrawOrthographic();
+  
+        SetDrawArea(m_TimerRect);
         RenderClock(); 
 
         // Render the information screens  
@@ -120,8 +136,13 @@ int MatchGame::Run()
 
 void MatchGame::I_MouseButton(GLFWwindow* window, int button, int action, int mods)
 {
-    if(action == GLFW_PRESS)
-        m_Deck->Click(m_MouseX, m_MouseY, 1);
+    ClickData result{ ClickData::Target::UNKOWN, 0.0, 0.0 };
+    
+    if (action == GLFW_PRESS)
+        result = ResolveClick(m_MouseX, m_MouseY);
+
+    if (result.target == ClickData::Target::PLAYAREA)
+        m_Deck->Click(result.x, result.y, button);
 }
 
 void MatchGame::I_MousePosition(GLFWwindow* window, double xpos, double ypos)
@@ -130,10 +151,42 @@ void MatchGame::I_MousePosition(GLFWwindow* window, double xpos, double ypos)
     m_MouseY = ypos;
 }
 
+ScreenRect MatchGame::CalculateGameArea(int screenWidth, int screenHeight)
+{
+    
+    ScreenRect res; 
+
+    // 0.1 height for padding, the sqrt(2) * height achieves aspect ratio of A4 Paper
+    res.height =    static_cast<GLint>(0.9 * screenHeight);
+    res.width =     static_cast<GLint>(sqrt(2) * res.height);
+
+    res.x =         static_cast<GLint>(0.025 * screenWidth);
+    res.y =         static_cast<GLint>(0.025 * screenHeight);
+    
+    return res;
+}
+
 void MatchGame::RenderClock()
 {
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+MatchGame::ClickData MatchGame::ResolveClick(double mouse_x, double mouse_y)
+{   
+    
+
+    // HACK: See if there's a nicer way to handle the types instead of double casting. 
+    if (mouse_x >= m_PlayAreaRect.x && mouse_x <= ((double)m_PlayAreaRect.x + m_PlayAreaRect.width)
+        && mouse_y >= (double)m_windowHeight - (m_PlayAreaRect.y + m_PlayAreaRect.height) && mouse_y <= (m_windowHeight - m_PlayAreaRect.y)) {
+        
+        double area_x = (double)(mouse_x - m_PlayAreaRect.x) / m_PlayAreaRect.width;
+        double area_y = (double)(mouse_y - (m_windowHeight - m_PlayAreaRect.y - m_PlayAreaRect.height) ) / m_PlayAreaRect.height;
+
+        return ClickData{ MatchGame::ClickData::Target::PLAYAREA, area_x, area_y };
+    }
+    
+    return ClickData{ MatchGame::ClickData::Target::UNKOWN, mouse_x, mouse_y };
 }
 
 void ErrorCallbacks::GLFW_ErrorCallback(int error, const char* description)

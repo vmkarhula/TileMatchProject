@@ -161,6 +161,7 @@
     <ClInclude Include="CardMath.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Deck.h" />
+    <ClInclude Include="DeckUtils.h" />
     <ClInclude Include="MatchGame.h" />
     <ClInclude Include="RenderUtil.h" />
     <ClInclude Include="SimpleShader.h" />

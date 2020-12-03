@@ -59,5 +59,8 @@
     <ClInclude Include="RenderUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DeckUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

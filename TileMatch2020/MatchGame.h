@@ -38,7 +38,7 @@ namespace GLInfo {
 class MatchGame {
 
 public:
-	
+
 	MatchGame();
 	~MatchGame();
 
@@ -49,8 +49,25 @@ public:
 	void I_MousePosition(GLFWwindow* window, double xpos, double ypos);
 
 private: 
+	
+	// Represents a click with target area and normalized coordinates in it 
+	// (0.0, 0.0) for top left 
+	struct ClickData {
+
+		enum class Target{UNKOWN, MENU, PLAYAREA, MISS};
+
+		Target target;
+
+		double x;
+		double y; 
+
+	};
+
+	ScreenRect CalculateGameArea(int screenWidth, int screenHeight);
 
 	void RenderClock();
+
+	ClickData ResolveClick(double mouse_x, double mouse_y);
 
 	GLFWwindow* m_Window = nullptr;
 
@@ -65,7 +82,7 @@ private:
 
 	double m_PrevTick = 0.0;
 
-	ScreenRect m_PlayAreaRect;
-	ScreenRect m_TimerRect;
+	ScreenRect m_PlayAreaRect = { 50, 50, m_windowWidth - 300, m_windowHeight - 100 };
+	ScreenRect m_TimerRect{ m_windowWidth - 200, m_windowHeight - 100, 150, 50 };
 
 };
