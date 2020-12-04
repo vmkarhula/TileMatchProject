@@ -154,6 +154,7 @@
     <ClCompile Include="ext\src\glad\glad.c" />
     <ClCompile Include="MatchGame.cpp" />
     <ClCompile Include="MatchMain.cpp" />
+    <ClCompile Include="RenderUtil.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
   </ItemGroup>
   <ItemGroup>

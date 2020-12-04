@@ -21,8 +21,8 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
     {
     case GameSize::TINY: {
 
-        m_NumCardsX = 20;
-        m_NumCardsY = 20; 
+        m_NumCardsX = 5;
+        m_NumCardsY = 5; 
 
     } break;
 
@@ -53,19 +53,6 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
         }
 
     }
-    /*
-    Card newCard(Coordinate2D{ -0.5f, -0.5f }, Card::CamFace::BACK);
-    m_Cards.push_back(newCard);
-
-    Card newCard2(Coordinate2D{ 0.5f, -0.5f }, Card::CamFace::BACK);
-    m_Cards.push_back(newCard2);
-    
-    Card newCard3(Coordinate2D{ -0.5f, 0.5f }, Card::CamFace::BACK);
-    m_Cards.push_back(newCard3);
-    
-    Card newCard4(Coordinate2D{ 0.5f, 0.5f }, Card::CamFace::BACK);
-    m_Cards.push_back(newCard4);
-    */
 }
 
 Deck::~Deck()
@@ -154,26 +141,6 @@ void Deck::Click(double mouseX, double mouseY, int mouseButton)
     x = m_NumCardsX * mouseX;
 
     target = m_NumCardsX * y + x;
-
-    /*if (mouseX < 0.5) {
-
-        if (mouseY < 0.5)
-            target = 0;
-
-        else
-            target = 2;
-
-    }
-      
-    else {
-
-        if (mouseY < 0.5)
-            target = 1;
-
-        else
-            target = 3;
-    }
-    */    
     
     if (m_Cards[target].facing == Card::CamFace::BACK){
         
