@@ -8,7 +8,6 @@
 // For cerr
 #include <iostream>
 
-
 #include "glad/glad.h"
 
 #include "Card.h"
@@ -28,14 +27,14 @@ public:
 	~Deck();
 
 	void Update(double dt);
-	void DrawPerspective();
+	//void DrawPerspective();
 	void DrawOrthographic();
 
 	void Click(double mouseX, double mouseY, int mouseButton);
 
 private:
 
-	GLuint		FindUniform(std::string uniformName);
+	//GLuint		FindUniform(std::string uniformName);
 	CardGeom	CreateCardGeom();
 	void		ResolveSelection();
 
@@ -49,12 +48,17 @@ private:
 
 
 	std::vector<Card> m_Cards;
-	std::unordered_map<std::string, GLuint> m_ShaderCache;
-	
+
 	std::vector<Card*>		m_Selected;
 		
 	CardGeom				m_CardGeom;
-	SimpleShader			m_CardShader;
+
+	GLuint					m_CardBackTexID;
+	GLuint					m_CardFrontAtlasID;
+	
+	SimpleShader			m_CardSideShader;
+	SimpleShader			m_CardBackShader;
+	SimpleShader			m_CardFrontShader;
 
 	bool					m_DrawImGui;
 	

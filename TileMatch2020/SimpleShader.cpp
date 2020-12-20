@@ -1,4 +1,5 @@
 #include "SimpleShader.h"
+#include "GLFW/glfw3.h"
 
 // For reading the shader string
 #include <sstream>
@@ -80,6 +81,23 @@ SimpleShader::~SimpleShader()
 	glDeleteProgram(GL_ID);
 }
 
+GLuint SimpleShader::FindUniformLoc(std::string uniformName)
+{
+	auto search = m_ShaderCache.find(uniformName);
+
+	// If we can't find the uniform, query opengl for location and cache it
+	if (search == m_ShaderCache.end()) {
+
+		GLuint uniformID = glGetUniformLocation(GL_ID, uniformName.c_str());
+		m_ShaderCache[uniformName] = uniformID;
+		return uniformID;
+	}
+
+	// If we got it cached
+	else
+		return search->second;
+}
+
 void SimpleShader::Bind()
 {
 	glUseProgram(GL_ID);
@@ -97,6 +115,8 @@ void SimpleShader::CheckCompilerErrors(GLuint shader, std::string type)
 
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
 			std::cout << "ERROR! Shader compilation failed: " << type << "\n" << infoLog << std::endl;
+
+			
 		}
 	}
 
