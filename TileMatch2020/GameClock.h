@@ -24,5 +24,5 @@ private:
 	float m_TimeElapsed = 0.0f; 
 	bool m_Paused = true;
 
-	GLuint m_textureIDs[10]{};
+	GLuint m_clockDigitAtlas = 0;
 };

@@ -35,6 +35,9 @@ MatchGame::~MatchGame()
 
     if (m_Deck)
         delete(m_Deck);
+
+    if (m_GameClock)
+        delete(m_GameClock);
 }
 
 bool MatchGame::Init()
@@ -87,12 +90,17 @@ bool MatchGame::Init()
     glfwSetMouseButtonCallback(m_Window, InputCallbacks::I_MouseButtonForwarder);
     glfwSetCursorPosCallback(m_Window, InputCallbacks::I_MousePositionForwarder);
 
+    m_GameClock = new GameClock();
+
+
     return true;
 }
 
 int MatchGame::Run()
 {
 
+
+    m_GameClock->Start();
 
     while (!glfwWindowShouldClose(m_Window)){
         
@@ -105,7 +113,7 @@ int MatchGame::Run()
         m_PrevTick = currTick;
 
         m_Deck->Update(dt);
-        
+        m_GameClock->Update(dt);
 
         glViewport(0, 0, m_windowWidth, m_windowHeight);
         glScissor(0, 0, m_windowWidth, m_windowHeight);
@@ -170,12 +178,12 @@ void MatchGame::RenderClock()
 {
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_GameClock->Render();
 }
 
 MatchGame::ClickData MatchGame::ResolveClick(double mouse_x, double mouse_y)
 {   
     
-
     // HACK: See if there's a nicer way to handle the types instead of double casting. 
     if (mouse_x >= m_PlayAreaRect.x && mouse_x <= ((double)m_PlayAreaRect.x + m_PlayAreaRect.width)
         && mouse_y >= (double)m_windowHeight - (m_PlayAreaRect.y + m_PlayAreaRect.height) && mouse_y <= (m_windowHeight - m_PlayAreaRect.y)) {

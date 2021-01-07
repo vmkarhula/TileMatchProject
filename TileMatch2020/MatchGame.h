@@ -5,6 +5,7 @@
 
 #include "Deck.h"
 #include "RenderUtil.h"
+#include "GameClock.h"
 
 #include <memory>
 
@@ -72,6 +73,7 @@ private:
 	GLFWwindow* m_Window = nullptr;
 
 	Deck* m_Deck = nullptr;
+	GameClock* m_GameClock = nullptr;
 
 	int m_windowWidth = 1280;
 	int m_windowHeight = 720;

@@ -47,8 +47,8 @@ TextureHelp::TexCoordinates TextureHelp::GetAtlasCoordinates(int slotCountX, int
 
         return TexCoordinates{ (1.0f / slotCountX) * gridX + halfPixelX,
                                 (1.0f / slotCountX) * (gridX + 1) - halfPixelX,
-                                (1.0f / slotCountY) * gridY + halfPixelY,
-                                (1.0f / slotCountY) * (gridY + 1) - halfPixelY };
+                                1.0f - ((1.0f / slotCountY) * gridY + halfPixelY),
+                                1.0f - ((1.0f / slotCountY) * (gridY + 1) - halfPixelY) };
 
     }
 }

@@ -67,7 +67,7 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
             Card newCard(Coordinate2D{ static_cast<float>(0.5 * deltaX + j * deltaX -1.0f), static_cast < float>(0.5f * deltaY + i * deltaY - 1.0f )}, Card::CamFace::BACK);
             newCard.scale = 0.5*std::min(deltaX, deltaY);
             
-            TextureHelp::TexCoordinates coords = TextureHelp::GetAtlasCoordinates(4, 4, 0, 512, 512);
+            TextureHelp::TexCoordinates coords = TextureHelp::GetAtlasCoordinates(4, 4, 5, 512, 512);
 
             newCard.frontCoordinates = glm::vec4(coords.xStart, coords.xEnd, coords.yStart, coords.yEnd);
             m_Cards.push_back(newCard);
@@ -232,24 +232,6 @@ void Deck::Click(double mouseX, double mouseY, int mouseButton)
     }
 }
 
-/*GLuint Deck::FindUniform(std::string uniformName)
-{
-	auto search = m_ShaderCache.find(uniformName);
-
-	// If we can't find the uniform, query opengl for location and cache it
-	if (search == m_ShaderCache.end()) {
-
-		GLuint uniformID = glGetUniformLocation(m_CardSideShader.GL_ID, uniformName.c_str());
-		m_ShaderCache[uniformName] = uniformID;
-		return uniformID;
-	}
-
-	// If we got it cached
-	else 
-		return search->second;
-
-}
-*/
 CardGeom Deck::CreateCardGeom()
 {
     /*Card Front Area*/

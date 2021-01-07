@@ -1,39 +1,52 @@
 #include "GameClock.h"
+#include "RenderUtil.h"
 
-GameClock::GameClock()
+GameClock::GameClock(): m_clockDigitAtlas(LoadUtil::LoadTexture(".\\resource\\ph_digits.png"))
 {
 }
 
 void GameClock::Render()
 {
-	int minutesTens = static_cast<int>(m_Minutes / 10);
-	int minutesOnes = m_Minutes % 10;
+	
+    int minutesTens = static_cast<int>(m_Minutes / 10);
+    int minutesOnes = m_Minutes % 10;
 
-	int secondsTens = static_cast<int>(m_Seconds / 10);
-	int secondsOnes = m_Seconds % 10;
-
-	GLuint texMinutesTens = m_textureIDs[minutesTens];
-	GLuint texMinutesOnes = m_textureIDs[minutesOnes];
-	GLuint texSecondsTens = m_textureIDs[secondsTens];
-	GLuint texSecondsOnes = m_textureIDs[secondsOnes];
+    int secondsTens = static_cast<int>(m_Seconds / 10);
+    int secondsOnes = m_Seconds % 10;
 
 	float pos;
-
-
-
 
 }
 
 void GameClock::Update(float dt)
 {
+    if (!m_Paused) {
+
+        m_TimeElapsed += dt;
+        
+        if (m_TimeElapsed > 1.0f) {
+
+            m_Seconds++;
+            m_TimeElapsed -= 1.0f;
+        
+            if (m_Seconds > 59) {
+                
+                m_Minutes++;
+                m_Seconds -= 60;
+            }
+
+        }
+    }
 }
 
 void GameClock::Pause()
 {
+    m_Paused = true;
 }
 
 void GameClock::Start()
 {
+    m_Paused = false;
 }
 
 GLuint GameClock::CreateClockGeom()
@@ -94,9 +107,6 @@ GLuint GameClock::CreateClockGeom()
              1.0f, 1.0f
 
         };
-
-      
-
 
         return 0;
 }
