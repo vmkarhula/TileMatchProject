@@ -78,11 +78,11 @@ private:
 	int m_windowWidth = 1280;
 	int m_windowHeight = 720;
 
-
 	double m_MouseX = 0.0;
 	double m_MouseY = 0.0;
 
 	double m_PrevTick = 0.0;
+	double m_TimeElapsed = 0.0;
 
 	ScreenRect m_PlayAreaRect = { 50, 50, m_windowWidth - 300, m_windowHeight - 100 };
 	ScreenRect m_TimerRect{ m_windowWidth - 200, m_windowHeight - 100, 150, 50 };

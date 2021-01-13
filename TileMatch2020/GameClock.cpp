@@ -15,20 +15,19 @@ GameClock::GameClock() :
 void GameClock::Render()
 {
 	
-    int minutesTens = static_cast<int>(m_Minutes / 10);
-    int minutesOnes = m_Minutes % 10;
+    int minutesTens = static_cast<int>(m_TimeElapsed / 600);
+    int minutesOnes = static_cast<int>(m_TimeElapsed / 60);
 
-    int secondsTens = static_cast<int>(m_Seconds / 10);
-    int secondsOnes = m_Seconds % 10;
-
+    int secondsTens = static_cast<int>(m_TimeElapsed / 10) % 6;
+    int secondsOnes = static_cast<int>(m_TimeElapsed) % 10;
+    
     glUseProgram(m_clockDigitShader.GL_ID);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_clockDigitAtlas);
 
     GLuint coordLoc = m_clockDigitShader.FindUniformLoc("atlasCoordinates");
-
-    TextureUtil::TexCoordinates tc = TextureUtil::GetAtlasCoordinates(8, 4, 9, 1024, 1024);
+    TextureUtil::TexCoordinates tc = TextureUtil::GetAtlasCoordinates(8, 4, minutesTens, 1024, 1024);
 
     glm::vec4 glmTc = glm::vec4(tc.xStart, tc.xEnd, tc.yStart, tc.yEnd);
 
@@ -37,33 +36,35 @@ void GameClock::Render()
     glBindVertexArray(m_clockVAO);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    tc = TextureUtil::GetAtlasCoordinates(8, 4, minutesOnes, 1024, 1024);
+    glmTc =glm::vec4(tc.xStart, tc.xEnd, tc.yStart, tc.yEnd);
+    glUniform4f(coordLoc, glmTc[0], glmTc[1], glmTc[3], glmTc[2]);
+
     glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
     
-    glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
+    tc = TextureUtil::GetAtlasCoordinates(8, 4, secondsTens, 1024, 1024);
+    glmTc = glm::vec4(tc.xStart, tc.xEnd, tc.yStart, tc.yEnd);
+    glUniform4f(coordLoc, glmTc[0], glmTc[1], glmTc[3], glmTc[2]);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);   
+    
+    tc = TextureUtil::GetAtlasCoordinates(8, 4, secondsOnes, 1024, 1024);
+    glmTc = glm::vec4(tc.xStart, tc.xEnd, tc.yStart, tc.yEnd);
+    glUniform4f(coordLoc, glmTc[0], glmTc[1], glmTc[3], glmTc[2]);
+        
     glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
     
 
 
 }
 
-void GameClock::Update(float dt)
+void GameClock::Update(float reading, float dt)
 {
     if (!m_Paused) {
 
-        m_TimeElapsed += dt;
+        m_TimeElapsed = reading;
         
-        if (m_TimeElapsed > 1.0f) {
-
-            m_Seconds++;
-            m_TimeElapsed -= 1.0f;
-        
-            if (m_Seconds > 59) {
-                
-                m_Minutes++;
-                m_Seconds -= 60;
-            }
-
-        }
     }
 }
 
@@ -157,7 +158,6 @@ GLuint GameClock::CreateClockGeom()
             1.0f, 1.0f
 
         };
-
 
         glBindBuffer(GL_ARRAY_BUFFER, clockTexCoordBuf);
         glBufferData(GL_ARRAY_BUFFER, sizeof(clockTexCoords), clockTexCoords, GL_STATIC_DRAW);

@@ -99,9 +99,9 @@ bool MatchGame::Init()
 int MatchGame::Run()
 {
 
-
+    
     m_GameClock->Start();
-
+    
     while (!glfwWindowShouldClose(m_Window)){
         
 
@@ -110,10 +110,15 @@ int MatchGame::Run()
 
         double currTick = glfwGetTime();
         double dt = currTick - m_PrevTick;
+        
+        m_TimeElapsed += dt;
+        
+        glfwSetWindowTitle(m_Window, std::string("Tile Match 2020: " + std::to_string(m_TimeElapsed)).c_str());
+
         m_PrevTick = currTick;
 
         m_Deck->Update(dt);
-        m_GameClock->Update(dt);
+        m_GameClock->Update(m_TimeElapsed, dt);
 
         glViewport(0, 0, m_windowWidth, m_windowHeight);
         glScissor(0, 0, m_windowWidth, m_windowHeight);

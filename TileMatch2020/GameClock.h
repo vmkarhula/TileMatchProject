@@ -10,7 +10,7 @@ public:
 	GameClock();
 
 	void Render();
-	void Update(float dt);
+	void Update(float reading, float dt);
 
 	void Pause();
 	void Start();
