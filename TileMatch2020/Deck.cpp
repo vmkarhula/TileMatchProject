@@ -67,7 +67,7 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
             Card newCard(Coordinate2D{ static_cast<float>(0.5 * deltaX + j * deltaX -1.0f), static_cast < float>(0.5f * deltaY + i * deltaY - 1.0f )}, Card::CamFace::BACK);
             newCard.scale = 0.5*std::min(deltaX, deltaY);
             
-            TextureHelp::TexCoordinates coords = TextureHelp::GetAtlasCoordinates(4, 4, 5, 512, 512);
+            TextureUtil::TexCoordinates coords = TextureUtil::GetAtlasCoordinates(4, 4, 5, 512, 512);
 
             newCard.frontCoordinates = glm::vec4(coords.xStart, coords.xEnd, coords.yStart, coords.yEnd);
             m_Cards.push_back(newCard);

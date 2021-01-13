@@ -35,7 +35,7 @@ GLuint LoadUtil::LoadTexture(std::string filepath)
 
 }
 
-TextureHelp::TexCoordinates TextureHelp::GetAtlasCoordinates(int slotCountX, int slotCountY, int slot, int texSizeX, int texSizeY)
+TextureUtil::TexCoordinates TextureUtil::GetAtlasCoordinates(int slotCountX, int slotCountY, int slot, int texSizeX, int texSizeY)
 {
     {
 
@@ -43,7 +43,7 @@ TextureHelp::TexCoordinates TextureHelp::GetAtlasCoordinates(int slotCountX, int
         float halfPixelY = 1.0f / (2 * texSizeY);
 
         int gridX = slot % slotCountX;
-        int gridY = slot / slotCountY;
+        int gridY = slot / slotCountX;
 
         return TexCoordinates{ (1.0f / slotCountX) * gridX + halfPixelX,
                                 (1.0f / slotCountX) * (gridX + 1) - halfPixelX,

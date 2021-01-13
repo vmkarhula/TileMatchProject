@@ -35,7 +35,18 @@ inline void SetDrawArea(ScreenRect rect) {
 
 }
 
-namespace TextureHelp {
+namespace DrawUtil{
+
+	struct Coord2D{
+
+		float x, y; 
+
+	};
+
+}
+
+
+namespace TextureUtil {
 
 	struct TexCoordinates {
 
