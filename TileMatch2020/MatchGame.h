@@ -64,6 +64,8 @@ private:
 
 	};
 
+	void StartNewGame();
+
 	ScreenRect CalculateGameArea(int screenWidth, int screenHeight);
 
 	void RenderClock();

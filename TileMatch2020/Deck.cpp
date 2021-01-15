@@ -3,6 +3,8 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include <assert.h>
+#include <chrono>
+#include <algorithm>
 
 Deck::Deck(GameSize gameSize, std::string tileSet) :
 
@@ -13,9 +15,10 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
     m_CardFrontAtlasID(LoadUtil::LoadTexture(".\\resource\\atlas_dice.png")),
     m_CardSideShader(".\\shader\\cardflip.vs.glsl", ".\\shader\\basic.fs.glsl"),
     m_CardBackShader(".\\shader\\cardback.vs.glsl", ".\\shader\\cardback.fs.glsl"),
-    m_CardFrontShader(".\\shader\\cardfront.vs.glsl", ".\\shader\\cardfront.fs.glsl")
-
-
+    m_CardFrontShader(".\\shader\\cardfront.vs.glsl", ".\\shader\\cardfront.fs.glsl"),
+    //m_RNG(std::chrono::high_resolution_clock::now().time_since_epoch().count())
+    m_RNG(std::random_device{}()),
+    m_Score(0)
 {
     // Make sure uniforms are cached
     m_CardSideShader.FindUniformLoc("modelMtx");
@@ -59,18 +62,33 @@ Deck::Deck(GameSize gameSize, std::string tileSet) :
     
     double deltaY = 2.0 / m_NumCardsY;
     double deltaX = 2.0 / m_NumCardsX;
+    
+    std::vector<int> pairs;
+
+    for (int i = 0; i < (m_NumCardsX * m_NumCardsY) / 2; i++) {
+        
+        pairs.push_back(i);
+        pairs.push_back(i);
+    }
+
+    std::shuffle(pairs.begin(), pairs.end(), m_RNG);
+
+    int pairIndex = 0;
 
     for (int i = 0; i < m_NumCardsY; i++) {
 
         for (int j = 0; j < m_NumCardsX; j++) {
             
-            Card newCard(Coordinate2D{ static_cast<float>(0.5 * deltaX + j * deltaX -1.0f), static_cast < float>(0.5f * deltaY + i * deltaY - 1.0f )}, Card::CamFace::BACK);
+            Card newCard(Coordinate2D{ static_cast<float>(0.5 * deltaX + j * deltaX -1.0f), static_cast < float>(0.5f * deltaY + i * deltaY - 1.0f )}, pairs[pairIndex], Card::CamFace::BACK);
             newCard.scale = 0.5*std::min(deltaX, deltaY);
             
-            TextureUtil::TexCoordinates coords = TextureUtil::GetAtlasCoordinates(4, 4, 5, 512, 512);
+            TextureUtil::TexCoordinates coords = TextureUtil::GetAtlasCoordinates(4, 4, pairs[pairIndex], 512, 512);
 
             newCard.frontCoordinates = glm::vec4(coords.xStart, coords.xEnd, coords.yStart, coords.yEnd);
             m_Cards.push_back(newCard);
+
+            pairIndex++;
+
         }
 
     }
@@ -80,11 +98,13 @@ Deck::~Deck()
 {
 }
 
-void Deck::Update(double dt)
+Deck::GameState Deck::Update(double dt)
 {
 	for (Card& c : m_Cards)
 		c.Update(dt);
 
+
+    return Deck::GameState::IN_PROGRESS;
 }
 
 /*void Deck::DrawPerspective()
@@ -230,6 +250,11 @@ void Deck::Click(double mouseX, double mouseY, int mouseButton)
         }
 
     }
+}
+
+void Deck::Shuffle(int seed)
+{
+    
 }
 
 CardGeom Deck::CreateCardGeom()
@@ -470,12 +495,20 @@ CardGeom Deck::CreateCardGeom()
 
 void Deck::ResolveSelection()
 {
-    for (Card* card : m_Selected) {
+    
+    if (m_Selected.size() == 2 && m_Selected[0]->pairID == m_Selected[1]->pairID) {
 
-        card->Release(1.0f);
-        
+        m_Score++;
     }
+    
+    else{
+        for (Card* card : m_Selected) {
 
+            card->Release(1.0f);
+        
+        }
+    }
+    
     m_Selected.clear();
 }
 

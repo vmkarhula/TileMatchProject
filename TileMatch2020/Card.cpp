@@ -7,9 +7,10 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 
-Card::Card(Coordinate2D _pos, CamFace _facing) :
+Card::Card(Coordinate2D _pos, int _pairID, CamFace _facing) :
 
 	pos2D(_pos),
+	pairID(_pairID),
 	facing(_facing),
 	faceTexSlot(0),
 	rotation(0.0f),

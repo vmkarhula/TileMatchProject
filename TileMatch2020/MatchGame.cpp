@@ -164,6 +164,19 @@ void MatchGame::I_MousePosition(GLFWwindow* window, double xpos, double ypos)
     m_MouseY = ypos;
 }
 
+void MatchGame::StartNewGame()
+{
+    if (m_Deck)
+        delete m_Deck;
+
+    m_Deck = new Deck(Deck::GameSize::TINY);
+
+    m_Deck->Shuffle();
+
+    
+
+}
+
 ScreenRect MatchGame::CalculateGameArea(int screenWidth, int screenHeight)
 {
     

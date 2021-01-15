@@ -4,6 +4,7 @@
 #include <vector>
 // For shader uniform cache
 #include <unordered_map>
+#include <random>
 
 // For cerr
 #include <iostream>
@@ -22,15 +23,18 @@ class Deck {
 public:
 
 	enum class GameSize{ TINY, SMALL, MEDIUM, LARGE };
+	enum class GameState{ IN_PROGRESS, SOLVED, READY_TO_PLAY };
 
 	Deck(GameSize gameSize = GameSize::TINY, std::string tileSet = "basic");
 	~Deck();
 
-	void Update(double dt);
+	Deck::GameState Update(double dt);
 	//void DrawPerspective();
 	void DrawOrthographic();
 
 	void Click(double mouseX, double mouseY, int mouseButton);
+
+	void Shuffle(int seed = 0); 
 
 private:
 
@@ -62,5 +66,7 @@ private:
 
 	bool					m_DrawImGui;
 	
+	std::mt19937			m_RNG;
 	
+	int						m_Score;
 };

@@ -9,7 +9,7 @@ struct Card {
 	enum class CamFace { FRONT, BACK };
 	enum class State { TURNED, DELAYED, FREE, FROZEN };
 
-	Card(Coordinate2D pos, CamFace facing = CamFace::BACK);
+	Card(Coordinate2D pos, int pairID, CamFace facing = CamFace::BACK);
 	
 	// Turns the card face side up
 	void Turn();
@@ -23,8 +23,10 @@ struct Card {
 
 	void Update(float dt);
 
-		
+
+			
 	Coordinate2D pos2D;
+	int pairID;
 	CamFace facing;
 
 	int faceTexSlot; 
