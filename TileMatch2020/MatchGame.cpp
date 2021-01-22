@@ -11,13 +11,6 @@
 MatchGame::MatchGame()
 {
     // Set the screen portions according to the resolution
-    /* m_PlayAreaRect = { 
-        static_cast<GLint>(m_windowWidth * 0.02),
-        static_cast<GLint>(m_windowHeight * 0.05),
-        static_cast<GLint>(m_windowWidth -  m_windowWidth * 0.25),
-        static_cast<GLint>(m_windowHeight - m_windowHeight *  0.10)};
-    */
-
     m_PlayAreaRect = CalculateGameArea(m_windowWidth, m_windowHeight);
 
     m_TimerRect = {
